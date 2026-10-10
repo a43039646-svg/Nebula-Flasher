@@ -1,13 +1,13 @@
-# Nebula Flasher 1.0.2
+# Nebula Flasher 1.0.3
 
-**Release type:** icon and desktop-integration update to the first public release  
+**Release type:** cross-distribution build and dependency-check preparation  
 **Platform:** Linux desktop  
 **Interface and writer:** C + GTK4  
 **License:** MIT
 
 Nebula Flasher writes a local operating-system image to a removable USB drive and verifies the written bytes. The workflow is deliberately simple: choose an image, choose a USB drive, confirm destructive writing, then wait for writing and verification to finish.
 
-## Included in 1.0.2
+## Included in 1.0.3
 
 - Replace the earlier colored icon with a clean monochrome NF/USB identity: black background and white artwork.
 - Install the icon in standard desktop sizes from 16 px through 512 px.
@@ -33,19 +33,36 @@ Nebula Flasher writes a local operating-system image to a removable USB drive an
 
 The language selector contains 100+ choices. English, Russian, Ukrainian, Danish, German, French, Spanish, Italian, Portuguese, Dutch, Polish, Czech, Swedish and Norwegian have curated translations for core UI strings. Other language files can fall back to English for strings that have not been translated; the selector is not a promise that all 100+ languages are fully translated.
 
-## Install on Linux Mint / Ubuntu / Debian
+## Linux distributions and build dependencies
+
+Nebula Flasher is **Linux-only**. The source build is intended for common desktop distributions that provide GTK4, `pkg-config`, `util-linux` (`lsblk` and `findmnt`) and PolicyKit (`pkexec`). No Windows or macOS builds are provided.
+
+The dependency helper detects these package-manager families:
+
+| Distribution family | Package manager | GTK4 development package |
+| --- | --- | --- |
+| Debian, Ubuntu, Linux Mint and derivatives | APT | `libgtk-4-dev` |
+| Fedora and compatible RPM distributions | DNF | `gtk4-devel` |
+| Arch Linux, EndeavourOS and derivatives | pacman | `gtk4` |
+| openSUSE Tumbleweed and compatible SUSE systems | Zypper | `gtk4-devel` |
+| Alpine Linux | APK | `gtk4.0-dev` |
+
+Package-manager recognition is not a guarantee that every desktop configuration or hardware combination has been tested. Alpine and unusual/non-systemd desktop setups may need additional PolicyKit service and authentication-agent configuration.
 
 Download and extract this archive, then run from the extracted folder:
 
 ```bash
 chmod +x install-deps.sh install.sh
 ./install-deps.sh
+make clean
 make -j1
 make test
 ./install.sh
 ```
 
-The dependency helper supports APT, DNF, pacman, Zypper and APK. Review the package names and prompts before confirming package installation.
+The installer script verifies that required commands (`cc`, `make`, `pkg-config`, `lsblk`, `findmnt`, `pkexec`) and GTK4 development metadata are present. Review package manager prompts before confirming installation.
+
+The GitHub Actions workflow under `.github/workflows/linux-build.yml` is configured to build and run the safe writer-validation tests in Debian, Ubuntu, Fedora, Arch Linux, openSUSE Tumbleweed and Alpine containers. Check its actual run results after this branch is pushed; a configured workflow is not the same as a passed test.
 
 After installation, launch **Nebula Flasher** from the applications menu or run:
 
@@ -54,7 +71,7 @@ nebula-flasher
 nebula-flasher --version
 ```
 
-The installer asks for administrator permission to install the native executable, privileged writer, PolicyKit rule, desktop entry, NF icons and language files.
+The installer asks for administrator permission to install the native executable, privileged writer, PolicyKit rule, desktop entry, NF icons and language files. The installation uses `/usr/local/bin`, `/usr/libexec`, and system-wide desktop/icon/polkit directories; it may require administrator permission.
 
 ## Safety notes
 

@@ -1,8 +1,8 @@
-# Nebula Flasher 1.0.2 release checklist
+# Nebula Flasher 1.0.3 release checklist
 
 ## Checked for this source archive
 
-- [x] Version string set to 1.0.2 in the application source.
+- [x] Version string set to 1.0.3 in the application source.
 - [x] `--version` and `--help` handled before GTK initialization.
 - [x] Writer validation tests run without writing to disks (see release report before publishing).
 - [x] Release notes describe completed features and known limits.
@@ -11,7 +11,7 @@
 ## Verify on the maintainer's machine before declaring a production-ready release
 
 - [ ] Build the full GTK4 program on Linux Mint with `make -j1`.
-- [ ] Run `./nebula-flasher --version` and confirm `1.0.2`.
+- [ ] Run `./nebula-flasher --version` and confirm `1.0.3`.
 - [ ] Run `make test`.
 - [ ] Test writing a disposable USB drive; verify progress and byte comparison.
 - [ ] Boot the written USB on a test system, if practical.
@@ -37,3 +37,12 @@ A successful build or one successful flash test is not a certification for every
 - [x] NF icon master uses a black background and white NF/USB artwork.
 - [x] Standard hicolor icon sizes (16–512 px) are included.
 - [ ] After installation, verify the icon appears in the applications menu.
+
+
+## v1.0.3 multi-distro checks
+
+- [x] Add a CI build/test matrix for Debian, Ubuntu, Fedora, Arch Linux, openSUSE Tumbleweed and Alpine.
+- [x] Add package-manager dependency instructions for APT, DNF, pacman, Zypper and APK.
+- [ ] After pushing this release, confirm all CI matrix jobs pass; do not claim every distro passed until the real results are green.
+- [ ] Confirm runtime PolicyKit authentication on at least one Fedora/RPM-based distro and one Arch-based distro.
+- [ ] Confirm full USB write + read-back verification on at least one additional distro beyond Linux Mint.

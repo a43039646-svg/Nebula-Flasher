@@ -1,0 +1,50 @@
+name: Linux build and validation
+
+on:
+  push:
+    branches: [main, "release/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu 24.04
+            image: ubuntu:24.04
+            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential pkg-config libgtk-4-dev util-linux
+          - name: Debian stable
+            image: debian:stable-slim
+            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential pkg-config libgtk-4-dev util-linux
+          - name: Fedora
+            image: fedora:latest
+            install: dnf install -y gcc make pkgconf-pkg-config gtk4-devel util-linux
+          - name: Arch Linux
+            image: archlinux:latest
+            install: pacman -Syu --noconfirm --needed base-devel pkgconf gtk4 util-linux
+          - name: openSUSE Tumbleweed
+            image: opensuse/tumbleweed
+            install: zypper --non-interactive refresh && zypper --non-interactive install -y --no-recommends gcc make pkg-config gtk4-devel util-linux
+          - name: Alpine Linux
+            image: alpine:latest
+            install: apk add --no-cache build-base linux-headers pkgconf gtk4.0-dev util-linux
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build application and run writer validation tests
+        env:
+          DISTRO_IMAGE: ${{ matrix.image }}
+          INSTALL_COMMAND: ${{ matrix.install }}
+        run: |
+          docker run --rm \\
+            -e INSTALL_COMMAND="$INSTALL_COMMAND" \\
+            -v "$GITHUB_WORKSPACE:/src" \\
+            -w /src \\
+            "$DISTRO_IMAGE" \\
+            sh -ec 'eval "$INSTALL_COMMAND"; make clean; make -j2; make test; test "$(./nebula-flasher --version)" = "Nebula Flasher 1.0.3"'

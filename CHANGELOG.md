@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3 — cross-distro build preparation
+
+- Document native Linux build dependencies for APT, DNF, pacman, Zypper and APK systems.
+- Improve dependency installation checks and explicitly check for GTK4 pkg-config metadata, lsblk, findmnt and pkexec.
+- Add a Linux CI build/test matrix for Debian, Ubuntu, Fedora, Arch Linux, openSUSE Tumbleweed and Alpine.
+- Keep the release status honest: CI configuration does not itself prove the matrix passed; results must be checked after pushing this version.
+
+
 ## 1.0.2 — monochrome NF icon
 
 - Replace the previous colored NF artwork with the approved black-and-white NF/USB icon.

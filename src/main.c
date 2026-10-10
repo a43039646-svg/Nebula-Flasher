@@ -9,7 +9,7 @@
 
 #define APP_ID "io.nebula.Flasher"
 #define WRITER_PATH "/usr/libexec/nebula-flasher-writer"
-#define APP_VERSION "1.0.2"
+#define APP_VERSION "1.0.3"
 
 typedef struct {
     char language[8];
