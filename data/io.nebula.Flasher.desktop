@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Nebula Flasher
+Comment=Write and verify operating system images on USB drives
+Exec=nebula-flasher
+Icon=io.nebula.Flasher
+Terminal=false
+Categories=Utility;System;
+Keywords=USB;ISO;Flash;Bootable;Linux;
+StartupNotify=true
+StartupWMClass=io.nebula.Flasher
