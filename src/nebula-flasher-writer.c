@@ -415,6 +415,24 @@ int main(int argc, char **argv) {
         return 2;
     }
 
+    /* The device node may have changed while partitions were being unmounted.
+       Verify the opened file descriptor itself before the first destructive write. */
+    struct stat opened_stat;
+    unsigned long long opened_size = 0;
+    if (fstat(out, &opened_stat) != 0 || !S_ISBLK(opened_stat.st_mode) ||
+        major(opened_stat.st_rdev) != expected_major ||
+        minor(opened_stat.st_rdev) != expected_minor ||
+        ioctl(out, BLKGETSIZE64, &opened_size) != 0 || opened_size != device_size) {
+        close(in); close(out);
+        fail("The target drive changed before writing. Refresh the device list and try again.");
+        return 2;
+    }
+    if (is_backing_device_for_root(device_real)) {
+        close(in); close(out);
+        fail("Refusing to overwrite the device that contains the running operating system.");
+        return 2;
+    }
+
     unsigned char *buffer = malloc(CHUNK_SIZE);
     if (!buffer) {
         close(in); close(out);
