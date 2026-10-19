@@ -1,0 +1,27 @@
+# Maintainer recipe for the latest Nebula Flasher source from GitHub.
+pkgname=nebula-flasher-git
+pkgver=1.0.3
+pkgrel=1
+pkgdesc='Write and verify operating system images on USB drives'
+arch=('x86_64' 'aarch64')
+url='https://github.com/a43039646-svg/Nebula-Flasher'
+license=('MIT')
+depends=('gtk4' 'util-linux' 'polkit')
+makedepends=('cmake' 'gcc' 'git' 'pkgconf')
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  printf '1.0.3.r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -S "$srcdir/$pkgname" -B "$srcdir/$pkgname/build" \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build "$srcdir/$pkgname/build"
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install "$srcdir/$pkgname/build"
+}
