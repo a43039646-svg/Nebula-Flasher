@@ -42,9 +42,9 @@ jobs:
           DISTRO_IMAGE: ${{ matrix.image }}
           INSTALL_COMMAND: ${{ matrix.install }}
         run: |
-          docker run --rm \\
-            -e INSTALL_COMMAND="$INSTALL_COMMAND" \\
-            -v "$GITHUB_WORKSPACE:/src" \\
-            -w /src \\
-            "$DISTRO_IMAGE" \\
+          docker run --rm \
+            -e INSTALL_COMMAND="$INSTALL_COMMAND" \
+            -v "$GITHUB_WORKSPACE:/src" \
+            -w /src \
+            "$DISTRO_IMAGE" \
             sh -ec 'eval "$INSTALL_COMMAND"; make clean; make -j2; make test; test "$(./nebula-flasher --version)" = "Nebula Flasher 1.0.3"'
