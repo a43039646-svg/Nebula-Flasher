@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: MIT
+cmake_minimum_required(VERSION 3.21)
+project(NebulaFlasher VERSION 1.0.3 LANGUAGES C)
+
+include(GNUInstallDirs)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET gtk4)
+
+add_executable(nebula-flasher src/main.c src/i18n.c)
+target_link_libraries(nebula-flasher PRIVATE PkgConfig::GTK4)
+target_compile_options(nebula-flasher PRIVATE -Wall -Wextra -Wpedantic -Wformat=2 -Wshadow -Wconversion)
+target_compile_definitions(nebula-flasher PRIVATE
+    NEBULA_LOCALEDIR="${CMAKE_INSTALL_FULL_DATADIR}/nebula-flasher/locales"
+    NEBULA_WRITER_PATH="${CMAKE_INSTALL_FULL_LIBEXECDIR}/nebula-flasher-writer"
+)
+
+add_executable(nebula-flasher-writer src/nebula-flasher-writer.c)
+target_compile_options(nebula-flasher-writer PRIVATE -Wall -Wextra -Wpedantic -Wformat=2 -Wshadow -Wconversion)
+
+install(TARGETS nebula-flasher RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS nebula-flasher-writer RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
+install(FILES data/io.nebula.Flasher.desktop DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+install(FILES data/io.nebula.Flasher.policy DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/polkit-1/actions")
+install(DIRECTORY data/icons/hicolor/ DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor")
+install(DIRECTORY locales/ DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/nebula-flasher/locales" FILES_MATCHING PATTERN "*.lang")
+install(FILES LICENSE DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/nebula-flasher")
+
+set(CPACK_GENERATOR TGZ)
+find_program(NEBULA_DPKG_DEB dpkg-deb)
+if(NEBULA_DPKG_DEB)
+    list(APPEND CPACK_GENERATOR DEB)
+endif()
+find_program(NEBULA_RPMBUILD rpmbuild)
+if(NEBULA_RPMBUILD)
+    list(APPEND CPACK_GENERATOR RPM)
+endif()
+set(CPACK_PACKAGE_NAME nebula-flasher)
+set(CPACK_PACKAGE_VENDOR "Nebula Project")
+set(CPACK_PACKAGE_CONTACT "Nebula Project")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Write and verify operating system images on USB drives")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Nebula Project")
+set(CPACK_DEBIAN_PACKAGE_SECTION utils)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "util-linux, pkexec")
+find_program(NEBULA_DPKG_SHLIBDEPS dpkg-shlibdeps)
+if(NEBULA_DPKG_SHLIBDEPS)
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+endif()
+set(CPACK_RPM_PACKAGE_LICENSE MIT)
+set(CPACK_RPM_PACKAGE_REQUIRES "util-linux, polkit")
+set(CPACK_RPM_PACKAGE_AUTOREQPROV ON)
+include(CPack)
