@@ -34,7 +34,7 @@ jobs:
             install: zypper --non-interactive refresh && zypper --non-interactive install -y --no-recommends gcc make pkg-config gtk4-devel util-linux
           - name: Alpine Linux
             image: alpine:latest
-            install: apk add --no-cache build-base linux-headers pkgconf gtk4.0-dev util-linux
+            install: apk add --no-cache bash build-base linux-headers pkgconf gtk4.0-dev util-linux
     steps:
       - uses: actions/checkout@v4
       - name: Build application and run writer validation tests
