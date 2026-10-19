@@ -49,6 +49,18 @@ The dependency helper detects these package-manager families:
 
 Package-manager recognition is not a guarantee that every desktop configuration or hardware combination has been tested. Alpine and unusual/non-systemd desktop setups may need additional PolicyKit service and authentication-agent configuration.
 
+### Native packages
+
+The CMake build can create a TGZ archive, a DEB package when `dpkg-deb` is installed, and an RPM package when `rpmbuild` is installed. Arch Linux users can build the VCS package from `packaging/arch/PKGBUILD`. Install GTK4 development files, CMake, a C compiler and `pkg-config` before building.
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+cmake --build build
+cmake --build build --target package
+```
+
+Packages are written to `build/`. On Arch Linux, clone the repository, enter `packaging/arch`, then run `makepkg -si`. The Flasher package includes its PolicyKit action and privileged writer; a Flatpak is not offered because the current writer needs host-level block-device access.
+
 Download and extract this archive, then run from the extracted folder:
 
 ```bash
