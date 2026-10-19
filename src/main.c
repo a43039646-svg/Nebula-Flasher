@@ -8,7 +8,9 @@
 #include "i18n.h"
 
 #define APP_ID "io.nebula.Flasher"
-#define WRITER_PATH "/usr/libexec/nebula-flasher-writer"
+#ifndef NEBULA_WRITER_PATH
+#define NEBULA_WRITER_PATH "/usr/libexec/nebula-flasher-writer"
+#endif
 #define APP_VERSION "1.0.3"
 
 typedef struct {
@@ -574,7 +576,7 @@ static void start_flash(AppState *state) {
     if (!state->image_path || selected == GTK_INVALID_LIST_POSITION || selected >= state->drives->len) return;
     Drive *drive = g_ptr_array_index(state->drives, selected);
 
-    const char *argv[] = { "pkexec", WRITER_PATH, state->image_path, drive->path, drive->major_minor, NULL };
+    const char *argv[] = { "pkexec", NEBULA_WRITER_PATH, state->image_path, drive->path, drive->major_minor, NULL };
     GError *error = NULL;
     state->process = g_subprocess_newv(argv,
         G_SUBPROCESS_FLAGS_STDOUT_PIPE | G_SUBPROCESS_FLAGS_STDERR_MERGE, &error);
